@@ -21,8 +21,13 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
   const command = require(filePath);
-  client.commands.set(command.data.name, command);
+  if ('data' in command && 'execute' in command) {
+    client.commands.set(command.data.name, command);
+  } else {
+    console.warn(`⚠️ 指令 ${file} 缺少 data 或 execute，已略過`);
+  }
 }
+
 
 // Bot 上線
 client.once('ready', () => {
